@@ -1,11 +1,11 @@
 {
-  "name": "react-d3-components",
+  "name": "@chartbeat/react-d3-components",
   "version": "0.6.6",
   "description": "D3 components for React",
   "main": "lib/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/codesuki/react-d3-components.git"
+    "url": "https://github.com/chartbeat-labs/react-d3-components.git"
   },
   "keywords": [
     "d3",
@@ -45,5 +45,8 @@
     "postpublish": "rm -r ./lib",
     "build:js": "webpack && webpack --config webpack.config.min.js",
     "lint": "node_modules/.bin/eslint src/**; exit 0"
+  },
+  "publishConfig": {
+    "registry": "http://nexus.chartbeat.net/repository/npm-chartbeat-private/"
   }
 }
