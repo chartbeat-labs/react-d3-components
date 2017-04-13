@@ -88,9 +88,9 @@ const Axis = React.createClass({
             ticks = ticks.filter(element => element != 0);
         }
 
-        const tickSpacing = Math.max(innerTickSize, 0) + tickPadding;
+        const tickSpacing = Math.max(outerTickSize, 0) + tickPadding;
 
-        const sign = orientation === 'top' || orientation === 'left' ? -1 : 1;
+        const sign = orientation === 'top' || orientation === 'right' ? -1 : 1;
 
         const range = this._d3ScaleRange(scale);
 
@@ -118,7 +118,7 @@ const Axis = React.createClass({
                 textAnchor = 'end';
             }
 
-            labelElement = <text className={`${className} label`} textAnchor={"end"} x={width} y={-6}>{label}</text>;
+            labelElement = <text className={`${className} label`} textAnchor={textAnchor} x={width} y={-6}>{label}</text>;
         } else {
             transform = 'translate(0, {})';
             x = sign * tickSpacing;
@@ -140,7 +140,7 @@ const Axis = React.createClass({
                 textAnchor = 'middle';
             }
 
-            labelElement = <text className={`${className} label`} textAnchor="end" y={6} dy={orientation === 'left' ? '.75em' : '-1.25em'} transform="rotate(-90)">{label}</text>;
+            labelElement = <text className={`${className} label`} textAnchor={textAnchor} y={6} dy={orientation === 'left' ? '.75em' : '-1.25em'} transform="rotate(-90)">{label}</text>;
         }
 
         const tickElements = ticks.map((tick, index) => {

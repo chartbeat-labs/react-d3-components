@@ -78,48 +78,6 @@ For quick testing the [examples](#examples) might be enough.
 * Documentation
 * Tests
 
-## Changelog
-* 0.6.6: Fix ticks rendering over bar chart
-* 0.6.5:
-    * Add tickDirection property to Axis
-    * Add hideLabels property to PieChart
-    * Add yOrientation property to AreaChart
-    * Fix Line Chart rendering
-* 0.6.4: Fixed react dependency version (was 0.15.0 instead of 15.0.0)
-* 0.6.3: Changed react dependency version to >=0.14.0 to allow react 0.15.
-* 0.6.2: Fixed build system. Added colorByLabel property to BarChart.
-* 0.6.1: Fixed 'BarChart.getDOMNode(...) is deprecated.'
-* 0.6.0: Added [Waveform Chart](#waveform). Moved to React 0.14.
-* 0.5.2: Fixed default scale for dates
-* 0.5.1: Fixed new props not being used by DefaultScalesMixin
-* 0.5.0:
-    * Improved tooltip. (see example below)
-        * Tooltip now has different modes.
-        * AreaChart tooltip now contains x-value argument.
-    * Support for grouped bar charts. (see example below)
-    * Support to include child elements inside charts.
-    * Several bug fixes including recent pull requests.
-        * React is now a peer dependency
-* 0.4.8: Fixed bug were graphs don't resize correctly.
-* 0.4.7: Moved to React 0.13.1
-* 0.4.6:
-    * Added sort property to PieChart, same usage as d3.Pie.sort().
-    * Added support for strokeWidth, strokeDasharray, strokeLinecap to LineChart, can be string or function.
-    * Small bug fixes.
-* 0.4.5: Fixed tooltip not showing when mouse is over tooltip symbol. Tooltip will soon be revamped to allow custom components.
-* 0.4.4: Fixed tooltip position inside relative layout containers. Moved to webpack.
-* 0.4.3: Fixed tooltip not showing in Safari.
-* 0.4.2: Improved LineChart tooltip to show d3.svg.symbol() on nearest data point. Can be customized with shape and shapeColor props. LineChart toolip callback is callback(label, value) now where the format of value depends on your data format, default is {x: x, y: y}.
-* 0.4.1: Fixed compatibility issues with Safari and possible other browsers not supporting Number.isFinite().
-* 0.4.0: Added X-Axis Brush. Functioning but might change to improve ease of usage etc. Fixed Axis tickFormat not being set correctly.
-* 0.3.6: Fixed not correctly requiring D3.
-* 0.3.5: Fixed npm packaging.
-* 0.3.4: Charts now render correctly when included in another component. Line chart default axes now meet at 0.
-* 0.3.0: Added tooltips and made axis properties accessible.
-* 0.2.2: Fixed accessors not being used everywhere
-* 0.2.1: Excluded external libraries from build and make it usable as a browser include
-* 0.2.0: Custom accessors, stacked charts, default scales
-
 ## Examples
 Check out example/index.html found [here](http://codesuki.github.io/react-d3-components/example.html).
 

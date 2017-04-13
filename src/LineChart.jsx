@@ -15,7 +15,7 @@ import TooltipMixin from './TooltipMixin';
 
 const { array, func, string } = PropTypes;
 
-const DataSet = React.createClass({
+export const DataSet = React.createClass({
     propTypes: {
         data: array.isRequired,
         line: func.isRequired,
@@ -168,43 +168,33 @@ const LineChart = React.createClass({
         return [html, xPos, yPos];
     },
 
-    /*
-    _tooltipHtml(data, position) {
-        let {x, y0, y, values, label} = this.props;
-        let [xScale, yScale] = [this._xScale, this._yScale];
+    genTooltip() {
+        const {
+            data,
+            shape,
+            shapeColor,
+            colorScale
+        } = this.props;
 
-        let xValueCursor = xScale.invert(position[0]);
-        let yValueCursor = yScale.invert(position[1]);
+        const symbol = d3.svg.symbol().type(shape);
+        const symbolColor = shapeColor ? shapeColor : colorScale(this._tooltipData.label);
 
-        let xBisector = d3.bisector(e => { return x(e); }).left;
-        let xIndex = xBisector(data, xScale.invert(position[0]));
+        const translate = this._tooltipData ?
+            `translate(${xScale(x(this._tooltipData.value))},
+                       ${yScale(y(this._tooltipData.value))})` : '';
+        let tooltipSymbol = this.state.tooltip.hidden ? null :
+            <path
+                className="dot"
+                d={symbol()}
+                transform={translate}
+                fill={symbolColor}
+                onMouseEnter={evt => this.onMouseEnter(evt, data)}
+                onMouseLeave={evt => this.onMouseLeave(evt)}
+            />;
 
-        let indexRight = xIndex == data.length ? xIndex - 1 : xIndex;
-        let valueRight = x(data[indexRight]);
-
-        let indexLeft = xIndex == 0 ? xIndex : xIndex - 1;
-        let valueLeft = x(data[indexLeft]);
-
-        let index;
-        if (Math.abs(xValueCursor - valueRight) < Math.abs(xValueCursor - valueLeft)) {
-            index = indexRight;
-        } else {
-            index = indexLeft;
-        }
-
-        let yValue = y(data[index]);
-        let cursorValue = d3.round(yScale.invert(position[1]), 2);
-
-        return this.props.tooltipHtml(yValue, cursorValue);
+        return tooltipSymbol;
     },
-     */
 
-    /*
-             stroke,
-             strokeWidth,
-             strokeLinecap,
-             strokeDasharray,
-     */
     render() {
         const {
             height,
@@ -238,28 +228,13 @@ const LineChart = React.createClass({
             .interpolate(interpolate)
             .defined(defined);
 
-        let tooltipSymbol = null;
-        if (!this.state.tooltip.hidden) {
-            const symbol = d3.svg.symbol().type(shape);
-            const symbolColor = shapeColor ? shapeColor : colorScale(this._tooltipData.label);
-
-            const translate = this._tooltipData ? `translate(${xScale(x(this._tooltipData.value))}, ${yScale(y(this._tooltipData.value))})` : '';
-            tooltipSymbol = this.state.tooltip.hidden ? null :
-                <path
-                    className="dot"
-                    d={symbol()}
-                    transform={translate}
-                    fill={symbolColor}
-                    onMouseEnter={evt => this.onMouseEnter(evt, data)}
-                    onMouseLeave={evt => this.onMouseLeave(evt)}
-                />;
-        }
+        let tooltipSymbol = this.state.tooltip.hidden ? null : this.genTooltip();
 
         return (
             <div>
                 <Chart height={height} width={width} margin={margin}>
                     <Axis
-                        className="'x axis'"
+                        className="x axis"
                         orientation="bottom"
                         scale={xScale}
                         height={innerHeight}
