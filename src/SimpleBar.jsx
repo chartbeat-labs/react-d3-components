@@ -36,9 +36,9 @@ const DataSet = React.createClass({
                           colorScale(x(e));
 
             return (
-                <g className="bar_group">
+                <g className="bar_group"
+                   key={`${label(stack)}.${index}`}>
                     <Bar
-                        key={`${label(stack)}.${index}`}
                         height={xScale.range()}
                         width={yScale(y(e))}
                         x={yScale(y0(e))}

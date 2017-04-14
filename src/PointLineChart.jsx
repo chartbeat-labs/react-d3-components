@@ -33,16 +33,26 @@ const PointSet = React.createClass({
             var point = stack.values[stack.values.length - 1];
 
             return (
-                <circle
-                    key={`${label(stack)}`}
-                    className={'point'}
-                    cx={xScale(point.x)}
-                    cy={yScale(point.y)}
-                    r={3}
-                    fill={colorScale(label(stack))}
-                    onMouseEnter={onMouseEnter}
-                    onMouseLeave={onMouseLeave}
-                />
+                <g className="line_group" key={`${label(stack)}`}>
+                    <circle
+                        key={`${label(stack)}.point`}
+                        className={'point'}
+                        cx={xScale(point.x)}
+                        cy={yScale(point.y)}
+                        r={3}
+                        fill={colorScale(label(stack))}
+                        onMouseEnter={onMouseEnter}
+                        onMouseLeave={onMouseLeave}
+                    />
+                    <text
+                        className="label"
+                        x={xScale(point.x)}
+                        y={yScale(point.y)}
+                        fill={colorScale(label(stack))}
+                    >
+                        {label(stack)}
+                    </text>
+                </g>
             );
         });
 
