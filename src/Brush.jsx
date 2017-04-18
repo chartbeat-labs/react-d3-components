@@ -140,6 +140,7 @@ const Brush = React.createClass({
     _getMousePosition(e) {
         const svg = ReactDOM.findDOMNode(this).getElementsByTagName('svg')[0];
         let position;
+
         if (svg.createSVGPoint) {
             let point = svg.createSVGPoint();
             point.x = e.clientX;

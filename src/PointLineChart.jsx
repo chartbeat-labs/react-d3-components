@@ -82,7 +82,8 @@ class PointLineChart extends LineChart {
             xAxis,
             yAxis,
             shape,
-            shapeColor
+            shapeColor,
+            showPoint
         } = this.props;
 
         const data = this._data;
@@ -134,16 +135,18 @@ class PointLineChart extends LineChart {
                         onMouseLeave={this.onMouseLeave}
                         {...stroke}
                     />
-                    <PointSet
-                        data={data}
-                        colorScale={colorScale}
-                        values={values}
-                        label={label}
-                        xScale={xScale}
-                        yScale={yScale}
-                        onMouseEnter={this.onMouseEnter}
-                        onMouseLeave={this.onMouseLeave}
-                    />
+                    { showPoint &&
+                        <PointSet
+                            data={data}
+                            colorScale={colorScale}
+                            values={values}
+                            label={label}
+                            xScale={xScale}
+                            yScale={yScale}
+                            onMouseEnter={this.onMouseEnter}
+                            onMouseLeave={this.onMouseLeave}
+                        />
+                    }
                     {this.props.children}
                     {tooltipSymbol}
                 </Chart>

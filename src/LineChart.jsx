@@ -87,7 +87,7 @@ const LineChart = React.createClass({
         ArrayifyMixin,
         AccessorMixin,
         DefaultScalesMixin,
-        TooltipMixin
+        TooltipMixin,
     ],
 
     propTypes: {
@@ -104,19 +104,12 @@ const LineChart = React.createClass({
         };
     },
 
-    /*
-     The code below supports finding the data values for the line closest to the mouse cursor.
-     Since it gets all events from the Rect overlaying the Chart the tooltip gets shown everywhere.
-     For now I don't want to use this method.
-     */
-    _tooltipHtml(data, position) {
-        const {x, y, values, label} = this.props;
-        const xScale = this._xScale;
-        const yScale = this._yScale;
+    _closestXValues(data, position) {
+        const {x, values, label} = this.props;
 
-        const xValueCursor = xScale.invert(position[0]);
-        const yValueCursor = yScale.invert(position[1]);
+        const xValueCursor = this._xScale.invert(position[0]);
 
+        // Find x values closest to xValueCursor
         const xBisector = d3.bisector(e => x(e)).left;
         const valuesAtX = data.map(stack => {
             const idx = xBisector(values(stack), xValueCursor);
@@ -137,8 +130,19 @@ const LineChart = React.createClass({
             return { label: label(stack), value: values(stack)[index] };
         });
 
-        valuesAtX.sort((a, b) => y(a.value) - y(b.value));
+        return valuesAtX;
+    },
 
+    /******
+     * Generate a singular point tooltip at the point closest to the cursor
+     */
+    _pointTooltip(data, position) {
+        const { y } = this.props;
+
+        const valuesAtX = this._closestXValues(data, position).sort((a, b) => y(a.value) - y(b.value));
+
+        // Get the index in y closest to the cursor
+        const yValueCursor = this._yScale.invert(position[1]);
         const yBisector = d3.bisector(e => y(e.value)).left;
         const yIndex = yBisector(valuesAtX, yValueCursor);
 
@@ -162,37 +166,78 @@ const LineChart = React.createClass({
             valuesAtX[index].value
         );
 
-        const xPos = xScale(valuesAtX[index].value.x);
-        const yPos = yScale(valuesAtX[index].value.y);
+        const xPos = this._xScale(valuesAtX[index].value.x);
+        const yPos = this._yScale(valuesAtX[index].value.y);
 
         return [html, xPos, yPos];
     },
 
+    /******
+     * Generate a tooltip with data for each y value at the location x
+     */
+    _lineTooltip(data, position) {
+        const valuesAtX = this._closestXValues(data, position);
+
+        this._tooltipData = valuesAtX;
+        const html = this.props.tooltipHtml(valuesAtX);
+        const xPos = this._xScale(valuesAtX[0].value.x);
+
+        return [html, xPos, 0];
+    },
+
+    _tooltipHtml(data, position) {
+        const { tooltipMode } = this.props;
+
+        if (tooltipMode === "group" ) {
+            return this._lineTooltip(data, position);
+        } else {
+            return this._pointTooltip(data, position);
+        }
+    },
+
     genTooltip() {
         const {
+            x,
+            y,
             data,
             shape,
             shapeColor,
-            colorScale
+            colorScale,
+            tooltipMode,
         } = this.props;
+        const { height } = this.state.tooltip;
 
-        const symbol = d3.svg.symbol().type(shape);
-        const symbolColor = shapeColor ? shapeColor : colorScale(this._tooltipData.label);
+        if (tooltipMode === "group") {
+            const translate = this._tooltipData ?
+                `translate(${this._xScale(x(this._tooltipData[0].value))}, 0)` : '';
 
-        const translate = this._tooltipData ?
-            `translate(${xScale(x(this._tooltipData.value))},
-                       ${yScale(y(this._tooltipData.value))})` : '';
-        let tooltipSymbol = this.state.tooltip.hidden ? null :
-            <path
-                className="dot"
-                d={symbol()}
-                transform={translate}
-                fill={symbolColor}
-                onMouseEnter={evt => this.onMouseEnter(evt, data)}
-                onMouseLeave={evt => this.onMouseLeave(evt)}
-            />;
+            return this.state.tooltip.hidden ? null : 
+                    <rect
+                        className="tooltip line"
+                        transform={translate}
+                        width={1}
+                        height={height}
+                        onMouseEnter={evt => this.onMouseEnter(evt, data)}
+                        onMouseLeave={evt => this.onMouseLeave(evt)}
+                    />;
+        } else {
+            const symbol = d3.svg.symbol().type(shape);
+            const symbolColor = shapeColor ? shapeColor : colorScale(this._tooltipData.label);
 
-        return tooltipSymbol;
+            const translate = this._tooltipData ?
+                `translate(${this._xScale(x(this._tooltipData.value))},
+                        ${this._yScale(y(this._tooltipData.value))})` : '';
+
+            return this.state.tooltip.hidden ? null :
+                <path
+                    className="dot"
+                    d={symbol()}
+                    transform={translate}
+                    fill={symbolColor}
+                    onMouseEnter={evt => this.onMouseEnter(evt, data)}
+                    onMouseLeave={evt => this.onMouseLeave(evt)}
+                />;
+        }
     },
 
     render() {
